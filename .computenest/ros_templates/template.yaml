@@ -18,6 +18,14 @@ Conditions:
     Fn::Equals:
       - true
       - Ref: EnablePublicIp
+  LinuxTypeOS:
+    Fn::Equals:
+      - linux
+      - Ref: OSType
+  WindowsTypeOS:
+    Fn::Equals:
+      - windows
+      - Ref: OSType
 Parameters:
   VpcOption:
     Type: String
@@ -179,6 +187,17 @@ Parameters:
     MinLength: 8
     MaxLength: 30
     AssociationProperty: ALIYUN::ECS::Instance::Password
+    AssociationPropertyMetadata:
+      OSType: ${OSType}
+  OSType:
+    Type: String
+    Label:
+      en: os type
+      zh-cn: 操作系统类型
+    AllowedValues:
+      - linux
+      - windows
+    Default: windows
   EnablePublicIp:
     Type: Boolean
     Label:
@@ -287,6 +306,7 @@ Resources:
           IpProtocol: tcp
           NicType: internet
   InstanceGroup:
+    Condition: LinuxTypeOS
     Type: ALIYUN::ECS::InstanceGroup
     Properties:
       # 付费类型
@@ -302,7 +322,7 @@ Resources:
           - Ref: EcsVpc
           - Ref: VpcId
       VSwitchId:
-        'Fn::If':
+        Fn::If:
           - CreateVpcConditions
           - Ref: EcsVSwitch
           - Ref: VSwitchId
@@ -310,7 +330,7 @@ Resources:
         Ref: ZoneId
       SecurityGroupId:
         Ref: SecurityGroup
-      ImageId: centos_7_9_x64_20G_alibase_20240403.vhd
+      ImageId: centos
       Password:
         Ref: InstancePassword
       InstanceType:
@@ -329,6 +349,7 @@ Resources:
       IoOptimized: optimized
       MaxAmount: 1
   RunInstallCommand:
+    Condition: LinuxTypeOS
     Type: ALIYUN::ECS::RunCommand
     Properties:
       InstanceIds:
@@ -375,6 +396,49 @@ Resources:
 
           - SQLSERVER_PASSWORD:
               Ref: SQLSERVER_PASSWORD
+  WindowsInstanceGroup:
+    Condition: WindowsTypeOS
+    Type: ALIYUN::ECS::InstanceGroup
+    Properties:
+      # 付费类型
+      InstanceChargeType:
+        Ref: PayType
+      PeriodUnit:
+        Ref: PayPeriodUnit
+      Period:
+        Ref: PayPeriod
+      VpcId:
+        Fn::If:
+          - CreateVpcConditions
+          - Ref: EcsVpc
+          - Ref: VpcId
+      VSwitchId:
+        Fn::If:
+          - CreateVpcConditions
+          - Ref: EcsVSwitch
+          - Ref: VSwitchId
+      ZoneId:
+        Ref: ZoneId
+      SecurityGroupId:
+        Ref: SecurityGroup
+      ImageId: windows
+      Password:
+        Ref: InstancePassword
+      InstanceType:
+        Ref: EcsInstanceType
+      SystemDiskCategory: cloud_essd
+      SystemDiskSize: 200
+      DiskMappings:
+        - Category: cloud_essd
+          Size: 200
+          Device: /dev/xvdb
+      InternetMaxBandwidthOut:
+        Fn::If:
+          - EnablePublicIpConditions
+          - 5
+          - 0
+      IoOptimized: optimized
+      MaxAmount: 1
 Outputs:
   SQL Server Addresses:
     Description:
