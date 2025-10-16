@@ -440,45 +440,11 @@ Resources:
       IoOptimized: optimized
       MaxAmount: 1
 Outputs:
-  SQL Server Addresses:
-    Description:
-      zh-cn: SQL Server 地址
-      en: SQL Server Addresses
-    Value:
-      Fn::Sub:
-        - 'http://${ServerAddress}:1433'
-        - ServerAddress:
-            Fn::If:
-              - EnablePublicIpConditions
-              - Fn::Select:
-                - 0
-                - Fn::GetAtt:
-                  - InstanceGroup
-                  - PublicIps
-              - Fn::Select:
-                - 0
-                - Fn::GetAtt:
-                  - InstanceGroup
-                  - PrivateIps
-  SQL Server Private Addresses:
-    Condition: EnablePublicIpConditions
-    Description:
-      zh-cn: SQL Server 内网地址
-      en: SQL Server Addresses
-    Value:
-      Fn::Sub:
-        - 'http://${ServerAddress}:1433'
-        - ServerAddress:
-            Fn::Select:
-              - 0
-              - Fn::GetAtt:
-                  - InstanceGroup
-                  - PrivateIps
   DB_UserName:
     Description:
       zh-cn: SQL Server 用户名
       en: SQL Server UserName
-    Value: SYSTEM
+    Value: sa
 Metadata:
   ALIYUN::ROS::Interface:
     ParameterGroups:
