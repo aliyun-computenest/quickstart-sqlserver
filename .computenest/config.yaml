@@ -1,0 +1,80 @@
+Service:
+  RegionId: cn-hangzhou
+  DeployType: ros
+  DeployMetadata:
+    ServiceInstanceNameRule:
+      Prefix: couchdb
+    SupplierDeployMetadata:
+      ArtifactRelation:
+        'centos_7_9_x64_20G_alibase_20240403.vhd':
+          ArtifactId: ${Artifact.EcsImage.ArtifactId}
+          ArtifactVersion: ${Artifact.EcsImage.ArtifactVersion}
+    TemplateConfigs:
+      - Name: 单机版
+        Url: 'ros_templates/template.yaml'
+  ServiceType: private
+  ServiceInfo:
+    Locale: zh-CN
+    ShortDescription: couch deploy
+    Image: 'resources/icons/service_logo.png'
+Artifact:
+  EcsImage:
+    ArtifactType: EcsImage
+    ArtifactName: couchdb
+    Description: couchdb
+    ArtifactProperty:
+      RegionId: ${ImageBuilder.EcsImage.RegionId}
+      ImageId: ${ImageBuilder.EcsImage.SourceImageId}
+ImageBuilder:
+  EcsImage:
+    RegionId: ap-southeast-1
+    SourceImageId: aliyun_3_x64_20G_alibase_20240819.vhd
+    SystemDiskSize: 40
+    InstanceType: ecs.c7.2xlarge
+    InternetMaxBandwidthOut: 100
+    CommandType: RunShellScript
+    Timeout: 10800
+    Tags: [ ]
+    CommandContent: |-
+        #!/bin/bash
+        # 升级基础组件：
+        yum check-update
+        yum -y upgrade --security
+        yum -y upgrade-minimal
+
+        # 安装docker-ce
+        yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+        yum makecache
+        yum install -y curl git docker-ce
+        mkdir -p /etc/docker/
+        echo '{
+          "default-address-pools": [
+              {
+                  "base": "10.255.0.0/16",
+                  "size": 24
+              }
+          ]
+        }' > /etc/docker/daemon.json
+
+        prefixChinaRegion="cn-"
+        region=$(curl -s http://100.100.100.200/latest/meta-data/region-id)
+
+        if [[ ${region} == ${prefixChinaRegion}* && ${region} != "cn-hongkong" ]]; then
+        echo '{
+            "default-address-pools": [
+                {
+                    "base": "10.255.0.0/16",
+                    "size": 24
+                }
+            ],
+            "registry-mirrors": [
+                "https://mirrors-ssl.aliyuncs.com/"
+            ]
+        }' > /etc/docker/daemon.json
+        fi
+
+        sudo systemctl enable --now docker.socket
+        sudo systemctl enable --now docker.service
+      
+        cd /root
+        docker pull mcr.microsoft.com/mssql/server:2025-latest
