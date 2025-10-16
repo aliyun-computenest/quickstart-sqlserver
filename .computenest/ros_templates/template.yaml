@@ -330,7 +330,7 @@ Resources:
         Ref: ZoneId
       SecurityGroupId:
         Ref: SecurityGroup
-      ImageId: centos
+      ImageId: centos_7_9_x64_20G_alibase_20240403.vhd
       Password:
         Ref: InstancePassword
       InstanceType:
