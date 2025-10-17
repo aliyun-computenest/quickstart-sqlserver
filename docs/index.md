@@ -1,131 +1,88 @@
-# Demo服务实例部署文档
+## 🌟 服务简介
 
-## 概述
+SQL Server是由Microsoft开发和维护的关系型数据库管理系统（DBMS），广泛用于企业和组织的数据存储和管理。
 
-`(服务概述内容)`。
+## 🚀 部署流程
 
-```
-eg：
+1. 访问计算巢SqlServer社区版[部署链接](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceId=service-04edc57c62cd4c6b95b3)
+，按提示填写部署参数：
+![image.png](1.jpg)
 
-Demo服务是计算巢提供的示例。
-本文向您介绍如何开通计算巢上的`Demo`服务，以及部署流程和使用说明。
-```
+2. 参数填写完成后可以看到对应询价明细，确认参数后点击**下一步：确认订单**。
 
-## 计费说明
+3. 确认订单完成后同意服务协议并点击**立即创建**进入部署阶段。
 
-`(计费说明内容)`
+4. 等待部署完成后进入服务实例详情页，获取服务地址。
+   ![image.png](2.jpg)
 
-```
-eg:
+## 📚 使用指南
 
-Demo在计算巢上的费用主要涉及：
+### 链接SQL Server数据库（Windows版）
 
-- 所选vCPU与内存规格
-- 系统盘类型及容量
-- 公网带宽
+1. 使用Workbench工具以RDP协议登录Windows实例。
 
-计费方式包括：
+2. 在左下角搜索栏中输入ssms。
+   ![image.png](4.png)
 
-- 按量付费（小时）
-- 包年包月
+3. 单击Microsoft SQL Server Management Studio 18。
 
-目前提供如下实例：
+4. 在连接到服务器对话框中，设置服务器连接信息，单击连接。
 
-| 规格族 | vCPU与内存 | 系统盘 | 公网带宽 |
-| --- | --- | --- | --- |
-| ecs.r6.xlarge | 内存型r6，4vCPU 32GiB | ESSD云盘 200GiB PL0 | 固定带宽1Mbps |
+### 连接SQL Server数据库（Linux版）并禁用 sa 账号
 
-预估费用在创建实例时可实时看到。
-如需更多规格、其他服务（如集群高可用性要求、企业级支持服务等），请联系我们 [mailto:xx@xx.com](mailto:xx@xx.com)。
+首次使用sa账号登录SQL Server后，为了确保系统安全，建议创建新账号并禁用sa账号的登录。
 
-```
+1. 远程连接ECS，首次登录账号使用sa。
 
-## 部署架构
+   ```shell
+   docker exec -it sqlserver /opt/mssql-tools18/bin/sqlcmd -No -S localhost -U sa
+   ```
+   参数值说明：
 
-`(部署概述内容)`
+   -S：指定服务器的名称或IP地址。
 
-## RAM账号所需权限
+   -U：用户名。
 
-`(权限策略内容)`
+2. 创建新账号并禁用sa账号。
+   ```shell
+   CREATE LOGIN <YOUR_USER> WITH PASSWORD = '<YOUR_PASSWORD>';
+   ```
+   <YOUR_USER>替换为您要设置的账号。
 
-```
-eg: 
+   <YOUR_PASSWORD>替换为您要设置的密码。
 
-Demo服务需要对ECS、VPC等资源进行访问和创建操作，若您使用RAM用户创建服务实例，需要在创建服务实例前，对使用的RAM用户的账号添加相应资源的权限。添加RAM权限的详细操作，请参见[为RAM用户授权](https://help.aliyun.com/document_detail/121945.html)。所需权限如下表所示。
+   执行GO使命令生效。
+   ```shell
+   GO
+   ```
 
+3. 分配sysadmin角色。
+   ```
+   ALTER SERVER ROLE sysadmin ADD MEMBER <YOUR_USER>;
+   ```
+   执行GO使命令生效。
+   ```shell
+   GO
+   ```
 
-| 权限策略名称 | 备注 |
-| --- | --- |
-| AliyunECSFullAccess | 管理云服务器服务（ECS）的权限 |
+4. 禁用sa账号。
+   ```shell
+   ALTER LOGIN sa ENABLE;
+   ```
+   执行GO使命令生效。
+   ```shell
+   GO
+   ```
 
-```
+5. 查看修改是否生效。
+   ```shell
+   SELECT name, is_disabled FROM sys.server_principals WHERE name IN ('sa', '<YOUR_USER>');
+   ``` 
+   执行GO使命令生效。
+   ```shell
+   GO
+   ```
+   如下图所示，is_disabled=1表示被禁用；is_disabled=0表示启用。
+   ![image.png](3.png)
 
-## 部署流程
-
-### 部署步骤
-
-`(部署步骤内容)`
-
-```
-eg:
-
-1. 单击部署链接，进入服务实例部署界面，根据界面提示，填写参数完成部署。
-2. 补充示意图。
-```
-### 部署参数说明
-
-`(部署参数说明内容)`
-
-```
-eg:
-
-您在创建服务实例的过程中，需要配置服务实例信息。下文介绍云XR实时渲染平台服务实例输入参数的详细信息。
-
-| 参数组 | 参数项 | 示例 | 说明 |
-| --- | --- | --- | --- |
-| 服务实例名称 |  | test | 实例的名称 |
-| 地域 |  | 华北2（北京） | 选中服务实例的地域，建议就近选中，以获取更好的网络延时。 |
-```
-
-### 验证结果
-
-`(验证结果内容)`
-
-```
-eg:
-
-1. 查看服务实例。服务实例创建成功后，部署时间大约需要2分钟。部署完成后，页面上可以看到对应的服务实例。 
-2. 通过服务实例访问TuGraph。进入到对应的服务实例后，可以在页面上获取到web、rpc、ssh共3种使用方式。
-```
-
-### 使用Demo
-
-`(服务使用说明内容)`
-
-```
-eg:
-
-请访问Demo官网了解如何使用：[使用文档](https://www.aliyun.com)
-```
-
-## 问题排查
-
-`(服务使用说明内容)`
-
-```
-eg:
-
-请访问[Demo的问题排查链接](https://www.aliyun.com)获取帮助。
-```
-
-## 联系我们
-
-欢迎访问Demo官网（[https://www.aliyun.com](https://www.aliyun.com)）了解更多信息。
-
-联系邮箱：[https://www.aliyun.com](mailto:https://www.aliyun.com)
-
-社区版开源地址：[https://github.com/](https://github.com/)
-
-扫码关注微信公众号，技术博客、活动通知不容错过：
-
-`(添加二维码图片)`
+更多用法请参考SqlServer[官网文档](https://learn.microsoft.com/zh-cn/sql/sql-server/?view=sql-server-ver17)。
