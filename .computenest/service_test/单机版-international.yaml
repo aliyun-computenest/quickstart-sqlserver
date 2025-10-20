@@ -1,0 +1,13 @@
+templateName: 单机版
+regionId: ap-southeast-1
+parameters:
+  SQLSERVER_PASSWORD: "$[iact3-auto]"
+  VpcCidrBlock: "192.168.0.0/16"
+  EnablePublicIp: true
+  OSType: "windows"
+  VpcOption: "NewVPC"
+  PayType: "PostPaid"
+  EcsInstanceType: "Please fill in"
+  VSwitchCidrBlock: "192.168.1.0/24"
+  InstancePassword: "$[iact3-auto]"
+caseId: stc-2267ff7474024462b22f

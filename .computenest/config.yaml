@@ -10,43 +10,43 @@ Service:
           ArtifactId: ${Artifact.Artifact_1.ArtifactId}
           ArtifactVersion: ${Artifact.Artifact_1.ArtifactVersion}
       SupplierTemplateConfigs:
-        - Name: 单机版
-          Url: ros_templates/template.yaml
-          PredefinedParameters: []
-          AllowedRegions:
-            - cn-qingdao
-            - cn-beijing
-            - cn-zhangjiakou
-            - cn-huhehaote
-            - cn-wulanchabu
-            - cn-guangzhou
-            - cn-hangzhou
-            - cn-shanghai
-            - cn-shenzhen
-            - cn-heyuan
-            - cn-chengdu
-    TemplateConfigs:
       - Name: 单机版
         Url: ros_templates/template.yaml
-        AllowedRegions:
-          - cn-qingdao
-          - cn-beijing
-          - cn-zhangjiakou
-          - cn-huhehaote
-          - cn-wulanchabu
-          - cn-guangzhou
-          - cn-hangzhou
-          - cn-shanghai
-          - cn-shenzhen
-          - cn-heyuan
-          - cn-chengdu
         PredefinedParameters: []
-        DeployScene: ECS
-        OutputConfigs:
-          - OutputKey: SQL Server Private Addresses Linux
-            EnableWebProxy: true
-          - OutputKey: SQL Server Private Addresses Windows
-            EnableWebProxy: true
+        AllowedRegions:
+        - cn-qingdao
+        - cn-beijing
+        - cn-zhangjiakou
+        - cn-huhehaote
+        - cn-wulanchabu
+        - cn-guangzhou
+        - cn-hangzhou
+        - cn-shanghai
+        - cn-shenzhen
+        - cn-heyuan
+        - cn-chengdu
+    TemplateConfigs:
+    - Name: 单机版
+      Url: ros_templates/template.yaml
+      AllowedRegions:
+      - cn-qingdao
+      - cn-beijing
+      - cn-zhangjiakou
+      - cn-huhehaote
+      - cn-wulanchabu
+      - cn-guangzhou
+      - cn-hangzhou
+      - cn-shanghai
+      - cn-shenzhen
+      - cn-heyuan
+      - cn-chengdu
+      PredefinedParameters: []
+      DeployScene: ECS
+      OutputConfigs:
+      - OutputKey: SQL Server Private Addresses Linux
+        EnableWebProxy: true
+      - OutputKey: SQL Server Private Addresses Windows
+        EnableWebProxy: true
     NetworkMetadata:
       EnablePrivateVpcConnection: false
       EnableReversePrivateVpcConnection: false
@@ -60,10 +60,13 @@ Service:
         EnablePrometheus: false
   ServiceType: private
   ServiceInfo:
-    Locale: zh-CN
-    ShortDescription: "Microsoft SQL Server 是一种关系数据库管理系统 (RDBMS)。 应用程序和工具连接到 SQL Server 实例或数据库，并使用 Transact-SQL (T-SQL) 进行通信。\n"
-    Image: resources/icons/service_logo.png
+  - Locale: zh-CN
     Name: SqlServer社区版
+    ShortDescription: "Microsoft SQL Server 是一种关系数据库管理系统 (RDBMS)。 应用程序和工具连接到 SQL Server
+      实例或数据库，并使用 Transact-SQL (T-SQL) 进行通信。\n"
+    Image: 
+      https://service-info-public.oss-cn-hangzhou.aliyuncs.com/5141674772595072/service-image/47c51939-5be0-4741-919c-f8e8b94a4c37.jpg
+    Softwares: []
   ShareType: Public
   ApprovalType: Manual
 Artifact:
@@ -75,34 +78,34 @@ Artifact:
       RegionId: ${ImageBuilder.EcsImage.RegionId}
       ImageId: ${ImageBuilder.EcsImage.SourceImageId}
     SupportRegionIds:
-      - cn-beijing
-      - cn-wulanchabu
-      - me-central-1
-      - cn-qingdao
-      - cn-wuhan-lr
-      - cn-shanghai
-      - cn-hongkong
-      - cn-heyuan
-      - na-south-1
-      - eu-central-1
-      - cn-zhangjiakou
-      - us-west-1
-      - cn-shenzhen
-      - eu-west-1
-      - ap-northeast-2
-      - ap-northeast-1
-      - me-east-1
-      - cn-chengdu
-      - cn-guangzhou
-      - ap-southeast-1
-      - ap-southeast-3
-      - cn-huhehaote
-      - us-southeast-1
-      - ap-southeast-5
-      - us-east-1
-      - ap-southeast-6
-      - ap-southeast-7
-      - cn-hangzhou
+    - cn-beijing
+    - cn-wulanchabu
+    - me-central-1
+    - cn-qingdao
+    - cn-wuhan-lr
+    - cn-shanghai
+    - cn-hongkong
+    - cn-heyuan
+    - na-south-1
+    - eu-central-1
+    - cn-zhangjiakou
+    - us-west-1
+    - cn-shenzhen
+    - eu-west-1
+    - ap-northeast-2
+    - ap-northeast-1
+    - me-east-1
+    - cn-chengdu
+    - cn-guangzhou
+    - ap-southeast-1
+    - ap-southeast-3
+    - cn-huhehaote
+    - us-southeast-1
+    - ap-southeast-5
+    - us-east-1
+    - ap-southeast-6
+    - ap-southeast-7
+    - cn-hangzhou
 ImageBuilder:
   EcsImage:
     RegionId: ap-southeast-1
@@ -112,47 +115,47 @@ ImageBuilder:
     InternetMaxBandwidthOut: 100
     CommandType: RunShellScript
     Timeout: 10800
-    Tags: [ ]
+    Tags: []
     CommandContent: |-
-        #!/bin/bash
-        # 升级基础组件：
-        yum check-update
-        yum -y upgrade --security
-        yum -y upgrade-minimal
+      #!/bin/bash
+      # 升级基础组件：
+      yum check-update
+      yum -y upgrade --security
+      yum -y upgrade-minimal
 
-        # 安装docker-ce
-        yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-        yum makecache
-        yum install -y curl git docker-ce
-        mkdir -p /etc/docker/
-        echo '{
+      # 安装docker-ce
+      yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+      yum makecache
+      yum install -y curl git docker-ce
+      mkdir -p /etc/docker/
+      echo '{
+        "default-address-pools": [
+            {
+                "base": "10.255.0.0/16",
+                "size": 24
+            }
+        ]
+      }' > /etc/docker/daemon.json
+
+      prefixChinaRegion="cn-"
+      region=$(curl -s http://100.100.100.200/latest/meta-data/region-id)
+
+      if [[ ${region} == ${prefixChinaRegion}* && ${region} != "cn-hongkong" ]]; then
+      echo '{
           "default-address-pools": [
               {
                   "base": "10.255.0.0/16",
                   "size": 24
               }
+          ],
+          "registry-mirrors": [
+              "https://mirrors-ssl.aliyuncs.com/"
           ]
-        }' > /etc/docker/daemon.json
+      }' > /etc/docker/daemon.json
+      fi
 
-        prefixChinaRegion="cn-"
-        region=$(curl -s http://100.100.100.200/latest/meta-data/region-id)
+      sudo systemctl enable --now docker.socket
+      sudo systemctl enable --now docker.service
 
-        if [[ ${region} == ${prefixChinaRegion}* && ${region} != "cn-hongkong" ]]; then
-        echo '{
-            "default-address-pools": [
-                {
-                    "base": "10.255.0.0/16",
-                    "size": 24
-                }
-            ],
-            "registry-mirrors": [
-                "https://mirrors-ssl.aliyuncs.com/"
-            ]
-        }' > /etc/docker/daemon.json
-        fi
-
-        sudo systemctl enable --now docker.socket
-        sudo systemctl enable --now docker.service
-
-        cd /root
-        docker pull mcr.microsoft.com/mssql/server:2025-latest
+      cd /root
+      docker pull mcr.microsoft.com/mssql/server:2025-latest
