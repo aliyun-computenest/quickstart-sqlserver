@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="计算巢是阿里云开放给企业应用服务商的服务管理平台。服务商能够在计算巢上发布私有化部署服务，为其客户提供云上软件一键部署的能力；同时也支持全托管模式的服务，赋能服务商托管其客户资源。">
+  <title>Home - Aliyun 计算巢 x Demo</title>
+
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css">
+  <link rel="stylesheet" href="css/theme.css">
+  
+
+  
+
+  
+  
+
+  
+    <script src="search/main.js"></script>
+  
+
+  
+
+  <script src="js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-inner">
+        <div class="logo">
+          <img src="./img/logo-2x.png">
+        </div>
+        <div class="nav-list">
+          <ul>
+          
+              <li><a href="#_1">🌟 服务简介</a></li>
+              
+          
+              <li><a href="#_2">🚀 部署流程</a></li>
+              
+          
+              <li><a href="#_3">📚 使用指南</a></li>
+              
+                  <li><a href="#sql-serverwindows">链接SQL Server数据库（Windows版）</a></li>
+                  
+              
+                  <li><a href="#sql-serverlinux-sa">连接SQL Server数据库（Linux版）并禁用 sa 账号</a></li>
+                  
+              
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="content theme-github">
+      
+      <div class="content-inner">        
+        
+        <h2 id="_1">🌟 服务简介</h2>
+<p>SQL Server是由Microsoft开发和维护的关系型数据库管理系统（DBMS），广泛用于企业和组织的数据存储和管理。</p>
+<h2 id="_2">🚀 部署流程</h2>
+<ol>
+<li>
+<p>访问计算巢SqlServer社区版<a href="https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&amp;ServiceId=service-04edc57c62cd4c6b95b3">部署链接</a>
+，按提示填写部署参数：
+<img alt="image.png" src="1.jpg" /></p>
+</li>
+<li>
+<p>参数填写完成后可以看到对应询价明细，确认参数后点击<strong>下一步：确认订单</strong>。</p>
+</li>
+<li>
+<p>确认订单完成后同意服务协议并点击<strong>立即创建</strong>进入部署阶段。</p>
+</li>
+<li>
+<p>等待部署完成后进入服务实例详情页，获取服务地址。
+   <img alt="image.png" src="2.jpg" /></p>
+</li>
+</ol>
+<h2 id="_3">📚 使用指南</h2>
+<h3 id="sql-serverwindows">链接SQL Server数据库（Windows版）</h3>
+<ol>
+<li>
+<p>使用Workbench工具以RDP协议登录Windows实例。</p>
+</li>
+<li>
+<p>在左下角搜索栏中输入ssms。
+   <img alt="image.png" src="4.png" /></p>
+</li>
+<li>
+<p>单击Microsoft SQL Server Management Studio 18。</p>
+</li>
+<li>
+<p>在连接到服务器对话框中，设置服务器连接信息，单击连接。</p>
+</li>
+</ol>
+<h3 id="sql-serverlinux-sa">连接SQL Server数据库（Linux版）并禁用 sa 账号</h3>
+<p>首次使用sa账号登录SQL Server后，为了确保系统安全，建议创建新账号并禁用sa账号的登录。</p>
+<ol>
+<li>远程连接ECS，首次登录账号使用sa。</li>
+</ol>
+<p><code>shell
+   docker exec -it sqlserver /opt/mssql-tools18/bin/sqlcmd -No -S localhost -U sa</code>
+   参数值说明：</p>
+<p>-S：指定服务器的名称或IP地址。</p>
+<p>-U：用户名。</p>
+<ol>
+<li>创建新账号并禁用sa账号。
+   <code>shell
+   CREATE LOGIN &lt;YOUR_USER&gt; WITH PASSWORD = '&lt;YOUR_PASSWORD&gt;';</code>
+   <YOUR_USER>替换为您要设置的账号。</li>
+</ol>
+<p><YOUR_PASSWORD>替换为您要设置的密码。</p>
+<p>执行GO使命令生效。
+   <code>shell
+   GO</code></p>
+<ol>
+<li>
+<p>分配sysadmin角色。
+   <code>ALTER SERVER ROLE sysadmin ADD MEMBER &lt;YOUR_USER&gt;;</code>
+   执行GO使命令生效。
+   <code>shell
+   GO</code></p>
+</li>
+<li>
+<p>禁用sa账号。
+   <code>shell
+   ALTER LOGIN sa ENABLE;</code>
+   执行GO使命令生效。
+   <code>shell
+   GO</code></p>
+</li>
+<li>
+<p>查看修改是否生效。
+   <code>shell
+   SELECT name, is_disabled FROM sys.server_principals WHERE name IN ('sa', '&lt;YOUR_USER&gt;');</code> 
+   执行GO使命令生效。
+   <code>shell
+   GO</code>
+   如下图所示，is_disabled=1表示被禁用；is_disabled=0表示启用。
+   <img alt="image.png" src="3.png" /></p>
+</li>
+</ol>
+<p>更多用法请参考SqlServer<a href="https://learn.microsoft.com/zh-cn/sql/sql-server/?view=sql-server-ver17">官网文档</a>。</p>
+        
+      </div>
+
+      <div class="copyrights">© 2009-2022 Aliyun.com 版权所有</div>
+    </div>
+  </div>
+  
+  <!--
+  MkDocs version      : 1.6.1
+  Docs Build Date UTC : 2025-10-20 03:28:54.231342+00:00
+  -->
+</body>
+</html>
