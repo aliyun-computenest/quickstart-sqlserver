@@ -7,8 +7,8 @@ Service:
           ArtifactId: ${Artifact.Artifact_1.ArtifactId}
           ArtifactVersion: ${Artifact.Artifact_1.ArtifactVersion}
         windows:
-          ArtifactId: ${Artifact.Artifact_2.ArtifactId}
-          ArtifactVersion: ${Artifact.Artifact_2.ArtifactVersion}
+          ArtifactId: ${Artifact.Artifact_1.ArtifactId}
+          ArtifactVersion: ${Artifact.Artifact_1.ArtifactVersion}
       SupplierTemplateConfigs:
         - Name: 单机版
           Url: ros_templates/template.yaml
@@ -103,27 +103,6 @@ Artifact:
       - ap-southeast-6
       - ap-southeast-7
       - cn-hangzhou
-  Artifact_2:
-    ArtifactType: EcsImage
-    ArtifactName: sqlserver_windows
-    Description: SQL Server2019企业版镜像
-    ArtifactProperty:
-      CommodityCode: cmjj00063029
-      CommodityVersion: V2.0-更新KB5033688
-    SupportRegionIds:
-      - cn-qingdao
-      - cn-beijing
-      - cn-zhangjiakou
-      - cn-huhehaote
-      - cn-wulanchabu
-      - cn-hangzhou
-      - cn-shanghai
-      - cn-shenzhen
-      - cn-heyuan
-      - cn-guangzhou
-      - cn-hongkong
-      - cn-chengdu
-      - ap-southeast-1
 ImageBuilder:
   EcsImage:
     RegionId: ap-southeast-1
